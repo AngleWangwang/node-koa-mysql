@@ -18,6 +18,10 @@ const errorHandler = (error, ctx) => {
             status = 400
             message = '密码错误'
             break
+        case errorType.UNAHTORIZATION:
+            status = 401
+            message = '无效的token'
+            break
         default:
             status = 404
             message = 'NOT FOUND'

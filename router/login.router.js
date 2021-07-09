@@ -1,5 +1,5 @@
 const Router = require('koa-router')
-const { verifyNameIsExsist, verifyPasswordIsTrue } = require('../middleware/login.middleware')
+const { verifyNameIsExsist, verifyPasswordIsTrue, verifyToken } = require('../middleware/login.middleware')
 const { verifyNotNull } = require('../middleware')
 const { create } = require('../controller/login.controller')
 const loginRouter = new Router({

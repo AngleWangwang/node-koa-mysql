@@ -1,6 +1,9 @@
+const jwt = require('jsonwebtoken')
+
 const userService = require('../service/user.service')
 const errorType = require('../constans/error-type')
 const { MD5password } = require('../utils')
+const { PUBLIC_KEY } = require('../app/config')
 const verifyNameIsExsist = async (ctx, next) => {
     const { username } = ctx.request.body
     const result = await userService.getUsername(username)
@@ -18,9 +21,32 @@ const verifyPasswordIsTrue = async (ctx, next) => {
         const error = new Error(errorType.PASSWORD_IS_ERROR)
         return ctx.app.emit('error', error, ctx)
     }
+    ctx.user = result[0]
+    await next()
+}
+
+const verifyToken = async (ctx, next) => {
+    const authorization = ctx.headers.authorization
+    console.log(authorization)
+    if (!authorization) {
+        const error = new Error(errorType.UNAHTORIZATION)
+        return ctx.app.emit('error', error, ctx)
+    }
+    const token = authorization.replace('Bearer ', '')
+    try {
+        const result = jwt.verify(token, PUBLIC_KEY, {
+            algorithms: ['RS256']
+        })
+        ctx.body = result
+    } catch (err) {
+        const error = new Error(errorType.UNAHTORIZATION)
+        return ctx.app.emit('error', error, ctx)
+    }
+  
     await next()
 }
 module.exports = {
     verifyNameIsExsist,
-    verifyPasswordIsTrue
+    verifyPasswordIsTrue,
+    verifyToken
 }
