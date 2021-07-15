@@ -3,6 +3,9 @@ const errorType = {
     USERNAME_IS_EXIST: 'username_is_exist',
     USERNAME_IS_NOT_EXIST: 'username_is_not_exist',
     PASSWORD_IS_ERROR: 'password_is_error',
-    UNAHTORIZATION: 'unAuthorization'
+    UNAHTORIZATION: 'unAuthorization',
+    UNPREMISSION: 'unpremission',
+    NOTRESOURCES: 'notresources',
+    SYSTEMERROR: 'systemerror'
 }
 module.exports = errorType
