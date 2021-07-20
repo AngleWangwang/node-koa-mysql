@@ -29,9 +29,27 @@ class commentController {
     }
     async update(ctx, next) {
         try {
-            
+            const { commentId } = ctx.params
+            const { content } = ctx.request.body
+            // const { id: userid } = ctx.user
+            const result = await commentService.update(commentId, content)
+            ctx.body = result
+            await next()
         } catch (err) {
-            
+            const error = new Error(errorType.SYSTEMERROR)
+            return ctx.app.emit('error', error, ctx, errMsg.message)
+        }
+    }
+    async remove(ctx, next) {
+        try {
+            const { commentId } = ctx.params
+            console.log('commentId==>', commentId)
+            const result = await commentService.delete(commentId)
+            ctx.body = result
+            await next()
+        } catch(err) {
+            const error = new Error(errorType.SYSTEMERROR)
+            return ctx.app.emit('error', error, ctx, errMsg.message)
         }
     }
 }

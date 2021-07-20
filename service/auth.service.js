@@ -1,10 +1,10 @@
 const pool = require('../app/database')
 
 class authService{
-    async verifyMomentPermission(momentId, userid) {
+    async checkAuth(tableName, tableId, userid) {
         // const statement =  `SELECT * FROM moment m WHERE m.ID =? AND m.user_id = ?;`
-        const statement =  `SELECT * FROM moment m WHERE m.ID =?;`
-        const [result] = await pool.execute(statement, [momentId])
+        const statement =  `SELECT * FROM ${tableName} m WHERE m.ID =?;`
+        const [result] = await pool.execute(statement, [tableId])
         console.log('result===', result)
         if (result.length === 0) {
             return 'moment is no exist'

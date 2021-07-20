@@ -4,9 +4,13 @@ const errorType = require('../constans/error-type')
 
 const verifyPermission = async (ctx, next) => {
     const { id: userid } = ctx.user
-    const { momentId } = ctx.params
+    // const { momentId } = ctx.params
+    const key = Object.keys(ctx.params)[0]
+    const tableName = key.replace('Id', '')
+    const momentId = ctx.params[key]
+    console.log(tableName, momentId)
     try {
-        const isPremission = await authService.verifyMomentPermission(momentId, userid, ctx)
+        const isPremission = await authService.checkAuth(tableName, momentId, userid)
         switch (isPremission) {
             case 'moment is no exist':
                 throw new Error(errorType.NOTRESOURCES)

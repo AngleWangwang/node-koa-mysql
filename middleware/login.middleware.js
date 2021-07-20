@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 
 const userService = require('../service/user.service')
-const { verifyMomentPermission } = require('../service/auth.service')
+const { checkAuth } = require('../service/auth.service')
 const errorType = require('../constans/error-type')
 const { MD5password } = require('../utils')
 const { PUBLIC_KEY } = require('../app/config')

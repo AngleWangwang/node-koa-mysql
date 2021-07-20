@@ -2,7 +2,7 @@ const Router = require('koa-router')
 
 const { create, getMomentListByUserid, update, remove } = require('../controller/moment.controller')
 const { verifyToken } = require('../middleware/login.middleware')
-const { verifyPermission } = require('../middleware/moment.middleware')
+const { verifyPermission } = require('../middleware')
 
 const momentRouter = new Router({ prefix: '/moment' })
 momentRouter.post('/', verifyToken, create)
