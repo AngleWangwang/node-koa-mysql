@@ -45,7 +45,6 @@ class commentService {
         }
     }
     async delete(commentId) {
-        console.log(commentId)
         try {
             const statement = `DELETE FROM comment WHERE ID = ?;`
             const [result] = await pool.execute(statement, [commentId])

@@ -35,7 +35,7 @@ class commentController {
             const result = await commentService.update(commentId, content)
             ctx.body = result
             await next()
-        } catch (err) {
+        } catch (errMsg) {
             const error = new Error(errorType.SYSTEMERROR)
             return ctx.app.emit('error', error, ctx, errMsg.message)
         }
@@ -43,11 +43,10 @@ class commentController {
     async remove(ctx, next) {
         try {
             const { commentId } = ctx.params
-            console.log('commentId==>', commentId)
             const result = await commentService.delete(commentId)
             ctx.body = result
             await next()
-        } catch(err) {
+        } catch(errMsg) {
             const error = new Error(errorType.SYSTEMERROR)
             return ctx.app.emit('error', error, ctx, errMsg.message)
         }

@@ -1,4 +1,5 @@
 const momentServer = require('../service/moment.service')
+const errorType = require('../constans/error-type')
 class momentController {
     async create(ctx, next) {
         // 获取用户评论数据
@@ -29,6 +30,28 @@ class momentController {
         const [result] = await momentServer.removeByMomentId(momentId)
         ctx.body = result
         await next()
+    }
+    async getPaginationList(ctx, next) {
+        try {
+            const { offset, size } = ctx.request.query
+            const [result] = await momentServer.getPaginationList(offset, size)
+            ctx.body = result
+            await next()
+        } catch (errMsg) {
+            const error = new Error(errorType.SYSTEMERROR)
+            return ctx.app.emit('error', error, ctx, errMsg.message)
+        }
+    }
+    async getMommentAndCommentDetailsById(ctx, next) {
+        try {
+            const { mommentId } = ctx.params
+            const [result] = await momentServer.getMommentAndCommentDetailsById(mommentId)
+            ctx.body = result
+            await next()
+        } catch (errMsg) {
+            const error = new Error(errorType.SYSTEMERROR)
+            return ctx.app.emit('error', error, ctx, errMsg.message)
+        }
     }
 }
 module.exports = new momentController()
