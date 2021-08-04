@@ -46,25 +46,67 @@ class momentServer {
             throw new Error(err)
         }
     }
-    async getMommentAndCommentDetailsById(mommentId) {
+    async getMommentDetailsById(mommentId) {
         try {
             const statement = `
-                SELECT m.ID id, m.content content, m.createTime createTime, m.updateTime updateTime,
-                JSON_OBJECT('id', u.ID, 'name', u.NAME) user,
-                JSON_ARRAYAGG(
-                    JSON_OBJECT('id', c.ID, 'content', c.content, 'commentId', c.comment_id, 'createTime', c.create_time, 'updateTime', c.update_time,
-                        'users', JSON_OBJECT('id', cu.ID, 'name', cu.NAME)
+                SELECT 
+                    m.ID id,
+                    m.content content,
+                    m.createTime createTime,
+                    m.updateTime updateTime,
+                    JSON_OBJECT('id', u.ID, 'name', u.NAME) user,
+                    (SELECT 
+                        JSON_OBJECT(
+                            'list', IF(COUNT(c.ID), JSON_ARRAYAGG(
+                                JSON_OBJECT(
+                                    'id', c.ID,
+                                    'content', c.content,
+                                    'commentId', c.comment_id,
+                                    'createTime', c.create_time,
+                                    'updateTime', c.update_time,
+                                    'users', (SELECT
+                                        JSON_OBJECT('id', cu.ID, 'name', cu.NAME)
+                                        FROM users cu
+                                        WHERE cu.ID = c.user_id 
+                                    )
+                                )
+                            ), NULL),
+                            'commentcount', COUNT(c.ID)
+                        )
+                    FROM comment c
+                    WHERE c.momment_id = m.ID
+                    ) commentinfo,
+                    (SELECT 
+                    JSON_OBJECT(
+                        'labelCount', COUNT(l.ID),
+                        'list', IF(COUNT(l.ID), JSON_ARRAYAGG(
+                            JSON_OBJECT(
+                                'labelName', l.name,
+                                'id', l.ID,
+                                'mommentId', ml.momment_id
+                            )
+                        ), NULL)
                     )
-                ) comments,
-                (SELECT COUNT(*) FROM comment c WHERE c.momment_id = m.ID) commentCount
-                FROM moment m 
+                    FROM moment_label_relationship ml
+                    LEFT JOIN label l ON l.ID = ml.label_id
+                    WHERE ml.momment_id = m.ID
+                    ) labelInfo
+                FROM moment m
                 LEFT JOIN users u ON m.user_id = u.ID
-                LEFT JOIN comment c ON c.momment_id = m.ID
-                LEFT JOIN users cu ON cu.Id = c.user_id
                 WHERE m.ID = ?;
             `
             const result = await pool.execute(statement, [mommentId])
             return result
+        } catch (err) {
+            throw new Error(err)
+        }
+    }
+    async createLabel(mommentId, labelId) {
+        const statement = `INSERT INTO moment_label_relationship (momment_id, label_id) VALUES (?, ?);`
+        try {
+            const result = await pool.execute(statement, [mommentId, labelId])
+            return result
+            
         } catch (err) {
             throw new Error(err)
         }

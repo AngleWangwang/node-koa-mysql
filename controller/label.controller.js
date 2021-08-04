@@ -14,10 +14,11 @@ class labelController{
         }
     }
     async verifyIsExistLabel(ctx, next) {
-        const { name } = ctx.params
+        const { name } = ctx.request.body
         try {
             const result = await labelSevice.isExistLabel(name)
             ctx.body = result
+            ctx.isExistLabel = result
             await next()
         } catch (errMsg) {
             const error = new Error(errorType.SYSTEMERROR)

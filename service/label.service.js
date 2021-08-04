@@ -13,7 +13,7 @@ class labelService{
         const statement = `SELECT * FROM label WHERE name = ?`
         try {
             const [result] = await pool.execute(statement, [name])
-            return result.length !== 0
+            return result
         } catch (err) {
             throw new Error(err)
         }
