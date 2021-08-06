@@ -11,10 +11,19 @@ class userService {
         const result = await pool.execute(statement, [name])
         return result[0]
     }
-    async createAvatar(fileName, userId) {
-        const statement = `INSERT INTO user_picture(file_name, user_id) VALUES(?, ?)`
+    async createAvatar(userId, fileName, size, mimetype, path) {
+        const statement = `INSERT INTO user_picture(user_id, file_name, size, mimetype, path) VALUES(?, ?, ?, ?, ?)`
         try {
-            const result = await pool.execute(statement, [fileName, userId])
+            const result = await pool.execute(statement, [userId, fileName, size, mimetype, path])
+            return result
+        } catch (err) {
+            throw new Error(err)
+        }
+    }
+    async fetchAvatar(userId) {
+        const statement = `SELECT * FROM user_picture WHERE user_id = ?`
+        try {
+            const result = await pool.execute(statement, [userId])
             return result
         } catch (err) {
             throw new Error(err)
